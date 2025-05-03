@@ -6,7 +6,7 @@ math: katex
 
 <style scoped>
 img[alt~="cover"]{
-  position:absolute; right:1rem; bottom:1rem; width:70%;
+  position:absolute; right:1rem; bottom:2rem; width:70%;
 }
 </style>
 ![cover](./fig/cover.svg)
@@ -17,7 +17,6 @@ img[alt~="cover"]{
 
 Presenter: Jiaze Li
 
-<br>
 <br>
 <br>
 <br>
