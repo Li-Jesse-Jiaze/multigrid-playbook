@@ -6,20 +6,24 @@ on:
       - '.github/workflows/build-slides.yml'
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-    - name: Convert Markdown into HTML and PDF
-      uses: KoharaKazuya/marp-cli-action@v4
-      with:
-        input_dir: slides
-        output_dir: dist
-        html: true
-        pdf:  true
-        allow_local_files: true
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: Slides
-        path: slides/main.pdf
+    - name: generate pdf
+      run: | 
+        docker run --rm --init -v $PWD:/home/marp/app/ -e MARP_USER="$(id -u):$(id -g)" marpteam/marp-cli slides/main.md --pdf --allow-local-files
+      
+    - name: commit & push
+      run: |
+        if ! git diff --exit-code --quiet
+        then
+          git add -A
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "[UPDATE] slide pdf"
+          git push
+        fi
