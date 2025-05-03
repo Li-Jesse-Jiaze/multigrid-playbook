@@ -1,0 +1,12 @@
+{
+  "name": "multigrid-seminar-2025",
+  "private": true,
+  "scripts": {
+    "build:pdf":   "marp slides/main.md -o dist/main.pdf --allow-local-files",
+    "build:html":  "marp slides/main.md -o dist/index.html --allow-local-files",
+    "watch":       "marp -s slides --allow-local-files"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.0.1"
+  }
+}

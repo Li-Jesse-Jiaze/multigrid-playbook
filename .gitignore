@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+dist/
+slides/*.pdf
+slides/*.html
+slides/*.pptx
+node_modules/

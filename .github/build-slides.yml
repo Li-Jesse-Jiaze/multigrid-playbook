@@ -1,0 +1,25 @@
+name: Build Marp slides
+on:
+  push:
+    paths:
+      - 'slides/**.md'
+      - '.github/workflows/build-slides.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Convert Markdown into HTML and PDF
+      uses: KoharaKazuya/marp-cli-action@v4
+      with:
+        input_dir: slides
+        output_dir: dist
+        html: true
+        pdf:  true
+        allow_local_files: true
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Slides
+        path: dist/
