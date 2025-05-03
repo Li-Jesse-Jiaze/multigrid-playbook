@@ -13,14 +13,13 @@ jobs:
     - name: Convert Markdown into HTML and PDF
       uses: KoharaKazuya/marp-cli-action@v4
       with:
-        args: >-
-          --input-dir slides
-          --output dist
-          --allow-local-files
-        generate-html: true
-        generate-pdf:  true
+        input_dir: slides
+        output_dir: dist
+        html: true
+        pdf:  true
+        allow_local_files: true
 
     - uses: actions/upload-artifact@v4
       with:
         name: Slides
-        path: dist/
+        path: slides/main.pdf
