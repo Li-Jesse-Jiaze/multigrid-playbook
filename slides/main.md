@@ -15,6 +15,12 @@ style: |              # 全局样式（作用于所有幻灯片）
     background: rgba(0,0,0,.1);
     font-size: 0.85em;    /* 字号稍微缩小一点 */
   }
+    .container{
+        display: flex;
+    }
+    .col{
+        flex: 1;
+    }
 ---
 
 <style scoped>
@@ -37,7 +43,11 @@ Presenter: Jiaze Li
 
 ---
 
-## Start with the Jacobi Method
+
+
+## Use the Jacobi Method
+<div class="container">
+<div class="col">
 
 Solve the problem
 $$
@@ -58,19 +68,26 @@ Not practical so
 $$
 x_1=x_0+D^{-1} r_0
 $$
+</div>
 
 
-<div class="sidebox">
+<div class="col">
 
-Exact solution: $x^*$</li>
-Error: $e_0 = x^*-x_0$</li>
-Residual: $r_0 = b-Ax_0 = A e_0$
+Exact solution
+$$
+x^*
+$$
+Error
+$$e_0 = x^*-x_0$$
+Residual
+$$r_0 = b-Ax_0 = A e_0$$
 
+</div>
 </div>
 
 ---
 
-## Model Problem
+## For Model Problem
 
 1D model problem
 
@@ -89,7 +106,7 @@ $$
 $$
 
 
-A model matrix problem
+As matrix
 
 $$
 A=\frac{1}{h^2}\left[\begin{array}{ccc}
@@ -102,21 +119,21 @@ $$
 ---
 
 <!-- _header: Model Problem -->
-
+<div class="container">
+<div class="col">
 
 Look at the matrix
 $$
-A=\left[\begin{array}{rrrrr}
+A=\left[\begin{array}{ccccc}
 2 & -1 & & & \\
 -1 & 2 & -1 & & \\
-& -1 & 2 & -1 & \\
-& & \ddots & & \\
+& \ddots & \ddots & \ddots & \\
+& & -1 & 2 & -1 \\
 & & & -1 & 2
 \end{array}\right]
 $$
 
 The eigenvalues
-
 $$
 \lambda_k=4 \sin ^2\left(\frac{k \pi}{2(n+1)}\right)
 $$
@@ -126,6 +143,154 @@ The eigenvectors
 $$
 \left(v_k\right)_j=\sin \left(\frac{(j+1) * k \pi}{n+1}\right)
 $$
+
+</div>
+<div class="col">
+
+Eigenvectors for $n=64$
+
+<style scoped>
+img[alt~="eigen"]{
+  display: block;
+  margin: 0 auto;
+  width: 70%;
+}
+</style>
+![eigen](./fig/model_eigen.svg)
+
+Performs like $\textcolor{#2ba02b}{\text{low}}$ and $\textcolor{#ff7f0f}{\text{high}}$ frequencies
+
+</div>
+</div>
+
+---
+
+## What does Jacobi do to error?
+
+<div class="container">
+
+<div class="col">
+
+The error propagation
+$$
+e \leftarrow T e \quad T=I-D^{-1} A
+$$
+
+$$
+T=\left[\begin{array}{ccccc}
+0 & 1/2 & & & \\
+1/2 & 0 & 1/2 & & \\
+& \ddots & \ddots & \ddots & \\
+& & 1/2 & 0 & 1/2 \\
+& & & 1/2 & 0
+\end{array}\right]
+$$
+
+It is averaging
+
+$$
+\textcolor{#2ba02b}{e_i^{\text {new }}} \leftarrow \frac{1}{2}\left(\textcolor{#ff7f0f}{e_{i-1}^{\text {old }}}+\textcolor{#ff7f0f}{e_{i+1}^{\text {old }}}\right)
+$$
+
+</div>
+
+<div class="col">
+
+For different types of error
+
+<style scoped>
+img[alt~="avg"]{
+  display: block;
+  margin: 0 auto;
+  width: 60%;
+}
+</style>
+![avg](./fig/avg.svg)
+
+It *averages out* certain frequency quickly
+
+</div>
+
+</div>
+
+
+---
+
+## From Jacobi to weighted-Jacobi
+
+<div class="container">
+
+<style scoped>
+img[alt~="eigen"]{
+  display: block;
+  margin: 0 auto;
+  width: 90%;
+}
+</style>
+
+<div class="col">
+
+$$
+u \leftarrow u+D^{-1} r
+$$
+
+![eigen](./fig/wj1.svg)
+
+</div>
+
+<div class="col">
+
+$$
+u \leftarrow u+\omega D^{-1} r , \omega = 2 / 3
+$$
+
+![eigen](./fig/wj2.svg)
+
+</div>
+
+</div>
+
+Better but why $2/3$?
+
+---
+
+<!-- _header: Fourier Analysis of Errors -->
+
+Using the eigenvectors of the error propagation $T$ as a basis for the error space
+$$
+e_0=\sum_{k=1}^n c_k v_k
+$$
+
+Then the error transforms like
+$$
+e \leftarrow\left(I-\omega D^{-1} A\right) e=T e
+$$
+
+$$
+\begin{aligned}
+e_1 = T e_0 & =\sum_{k=1}^n c_k T v_k \\
+& =\sum_{k=1}^n c_k \lambda_k v_k
+\end{aligned}
+$$
+
+Error on the direction of the $v_k$, or frequency $k$, is reduced by the magnitude of $\lambda_k$
+
+---
+
+<!-- _header: Fourier Analysis of Errors -->
+
+Eigenvalues of $T$ corresponding to different $\omega$
+
+<style scoped>
+img[alt~="eigen"]{
+  display: block;
+  margin: 0 auto;
+  width: 55%;
+}
+</style>
+![eigen](./fig/omega_eigen.svg)
+
+Weighted Jacobi with $\omega = 2/3$ dampens errors in high-frequency modes
 
 ---
 
