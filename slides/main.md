@@ -21,6 +21,12 @@ style: |              # 全局样式（作用于所有幻灯片）
     .col{
         flex: 1;
     }
+    .site {
+    color: gray;
+    font-size: 0.5em;
+    margin-top: -1em;
+    display: block;
+    }
 ---
 
 <style scoped>
@@ -32,9 +38,9 @@ img[alt~="cover"]{
 
 # Multigrid Methods
 
-> Y. Saad, *Iterative Methods for Sparse Linear Systems*, §§13.3–13.5
+Y. Saad, *Iterative Methods for Sparse Linear Systems*, §§13.3–13.5
 
-Presenter: Jiaze Li
+**Presenter: Jiaze Li**
 
 <br>
 <br>
@@ -43,51 +49,7 @@ Presenter: Jiaze Li
 
 ---
 
-
-
-## Use the Jacobi Method
-<div class="container">
-<div class="col">
-
-Solve the problem
-$$
-A x=b
-$$
-
-Iteratively
-$$
-x_1 \leftarrow x_0 + \text { update }
-$$
-
-Ideally
-$$
-x_1=x_0+e_0=x_0+A^{-1} r_0
-$$
-
-Not practical so
-$$
-x_1=x_0+D^{-1} r_0
-$$
-</div>
-
-
-<div class="col">
-
-Exact solution
-$$
-x^*
-$$
-Error
-$$e_0 = x^*-x_0$$
-Residual
-$$r_0 = b-Ax_0 = A e_0$$
-
-</div>
-</div>
-
----
-
-## For Model Problem
+## Model Problem
 
 1D model problem
 
@@ -99,22 +61,80 @@ u(0) & =u(1)=0
 $$
 
 
-Finite differences
+With finite differences
 
 $$
 \frac{-u_{i-1}+2 u_i-u_{i+1}}{h^2}=f_i \quad i=1, \ldots, n \quad u_0=u_{n+1}=0
 $$
 
 
-As matrix
+As matrix form
 
 $$
-A=\frac{1}{h^2}\left[\begin{array}{ccc}
+\frac{1}{h^2}\left[\begin{array}{ccc}
 2 & -1 & \\
 -1 & \ddots & \ddots \\
 & \ddots &
+\end{array}\right] \left[\begin{array}{c}
+u_1 \\
+\vdots \\
+u_{n}
+\end{array}\right] = 
+\left[\begin{array}{c}
+f_1 \\
+\vdots \\
+f_{n}
 \end{array}\right]
 $$
+
+---
+
+## Use the Jacobi Method
+
+Solve the problem
+$$
+A x=b
+$$
+
+Iteratively
+$$
+x_1=x_0+D^{-1} r_0
+$$
+
+> Or think of it as a gradient descent with
+> fixed step size $1$ and preconditioner $D^{-1}$
+
+<div class="sidebox">
+
+Exact solution
+$$
+x^*
+$$
+Error
+$$e_0 = x^*-x_0$$
+Residual
+$$r_0 = b-Ax_0 = A e_0$$
+
+</div>
+
+---
+
+## Some Convergence Test
+
+The number of iterations required to get the tolerance of 1.0E-10 (RMS residual norm)
+
+<style scoped>
+img[alt~="n_iter"]{
+  display: block;
+  margin: 0 auto;
+  width: 40%;
+}
+</style>
+![n_iter](./fig/n_iter.svg)
+
+<span class="site">Burkardt, J., 2011. Jacobi Iterative Solution of Poisson’s Equation in 1D [online]</span>
+
+The computational cost is about $\mathcal{O}(n^3)$. But why is that? Let's look at the details.
 
 ---
 
@@ -250,7 +270,7 @@ $$
 
 </div>
 
-Better but why $2/3$?
+Like a low-pass filter. Why?
 
 ---
 
