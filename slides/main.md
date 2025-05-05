@@ -2,18 +2,17 @@
 marp: true
 paginate: true
 math: katex
-style: |              # 全局样式（作用于所有幻灯片）
-  /* 右侧信息框的通用样式 */
+style: |
   section .sidebox{
-    position: absolute;   /* 关键：绝对定位 */
-    bottom: 2rem;            /* 距离顶部，可自行调整 */
-    right: 1rem;        /* 与右边保持间距 */
-    width: 30%;           /* 盒子宽度 */
+    position: absolute;
+    bottom: 2rem;
+    right: 1rem;
+    width: 30%;
     padding: 0.5rem .5rem;
     border: 0px;
     border-radius: 6px;
     background: rgba(0,0,0,.1);
-    font-size: 0.85em;    /* 字号稍微缩小一点 */
+    font-size: 0.85em;
   }
     .container{
         display: flex;
@@ -98,7 +97,7 @@ $$
 
 Iteratively
 $$
-x_1=x_0+D^{-1} r_0
+x^{(1)}=x^{(0)}+D^{-1} r^{(0)}
 $$
 
 > Or think of it as a gradient descent with
@@ -158,7 +157,7 @@ $$
 \lambda_k=4 \sin ^2\left(\frac{k \pi}{2(n+1)}\right)
 $$
 
-The eigenvectors
+The eigenvectors (are Fourier modes)
 
 $$
 \left(v_k\right)_j=\sin \left(\frac{(j+1) * k \pi}{n+1}\right)
@@ -274,11 +273,11 @@ Like a low-pass filter. Why?
 
 ---
 
-<!-- _header: Fourier Analysis of Errors -->
+## Fourier Analysis
 
 Using the eigenvectors of the error propagation $T$ as a basis for the error space
 $$
-e_0=\sum_{k=1}^n c_k v_k
+e^{(0)}=\sum_{k=1}^n c_k v_k
 $$
 
 Then the error transforms like
@@ -287,19 +286,37 @@ e \leftarrow\left(I-\omega D^{-1} A\right) e=T e
 $$
 
 $$
-\begin{aligned}
-e_1 = T e_0 & =\sum_{k=1}^n c_k T v_k \\
-& =\sum_{k=1}^n c_k \lambda_k v_k
-\end{aligned}
+e^{(\sigma)} = T e^{(0)} =\sum_{k=1}^n c_k T^\sigma v_k =\sum_{k=1}^n c_k \lambda_k^\sigma v_k
 $$
 
-Error on the direction of the $v_k$, or frequency $k$, is reduced by the magnitude of $\lambda_k$
+Converge with the factor $\|T\|$ or $\rho(T)$
 
 ---
 
-<!-- _header: Fourier Analysis of Errors -->
+<!-- _header: Fourier Analysis -->
 
-Eigenvalues of $T$ corresponding to different $\omega$
+For Jacobi and weighted-Jacobi
+$$
+\begin{aligned}
+T=I-D^{-1} A & \longrightarrow \lambda_k=1-\frac{1}{2} \cdot 4 \cdot \sin ^2\left(\frac{k \pi}{2(n+1)}\right) \\
+T=I-(2 / 3) D^{-1} A & \longrightarrow \lambda_k=1-\frac{2}{3} \cdot \frac{1}{2} \cdot 4 \cdot \sin ^2\left(\frac{k \pi}{2(n+1)}\right)
+\end{aligned}
+$$
+
+The spectral radius $\rho_n \approx 1-{C}/{n^2}$ (confirms the quadratic **#iteration**)
+
+But
+$$
+e^{(\sigma)} =\sum_{k=1}^n c_k \lambda_k^\sigma v_k
+$$
+error on different direction $v_k$, or frequency $k$, is reduced by different magnitude of $\lambda_k$
+
+
+---
+
+<!-- _header: Fourier Analysis -->
+
+$\lambda_k$ corresponding to different $\omega$
 
 <style scoped>
 img[alt~="eigen"]{
@@ -310,7 +327,22 @@ img[alt~="eigen"]{
 </style>
 ![eigen](./fig/omega_eigen.svg)
 
-Weighted Jacobi with $\omega = 2/3$ dampens errors in high-frequency modes
+Weighted-Jacobi with $\omega = 2/3$ dampens errors in high-frequency modes
+
+---
+
+## The Smoothing Factor
+
+The effectiveness of each iteration depends on $n^2$
+
+Half (high frequency) part of the error is reduced by $1/3$ 
+
+**Smoothing factor** of $T$ is the maximum magnitude of the upper half of the spectrum
+$$
+\max _{k \in[n / 2, n]}\left|\lambda_k\right|
+$$
+
+Can we recursively utilize this $1/3$ effectiveness on half the error？
 
 ---
 
