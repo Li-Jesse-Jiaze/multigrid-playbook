@@ -89,6 +89,7 @@ $$
 ---
 
 ## Use the Jacobi Method
+<br>
 
 Solve the problem
 $$
@@ -99,6 +100,9 @@ Iteratively
 $$
 x^{(1)}=x^{(0)}+D^{-1} r^{(0)}
 $$
+
+<br>
+
 
 > Or think of it as a gradient descent with
 > fixed step size $1$ and preconditioner $D^{-1}$
@@ -322,40 +326,43 @@ $\lambda_k$ corresponding to different $\omega$
 img[alt~="eigen"]{
   display: block;
   margin: 0 auto;
-  width: 55%;
+  width: 40%;
 }
 </style>
 ![eigen](./fig/omega_eigen.svg)
 
-Weighted-Jacobi with $\omega = 2/3$ dampens errors in high-frequency modes
+For $\omega = 2/3$, the high frequency part of the error is reduced by (at least) $1/3$ 
+
+> **Smoothing factor** of $T$: the maximum magnitude of the upper half spectrum
+
+Maybe it's possible to apply this 1/3 reduction on half the error, on and on?
 
 ---
 
-## The Smoothing Factor
+## How can we turn low frequency errors to high frequency?
 
-The effectiveness of each iteration depends on $n^2$
+Sampling on a coarse grid
 
-Half (high frequency) part of the error is reduced by $1/3$ 
+<style scoped>
+img[alt~="eigen"]{
+  display: block;
+  margin: 0 auto;
+  width: 75%;
+}
+</style>
+![eigen](./fig/coarse_grid.svg)
 
-**Smoothing factor** of $T$ is the maximum magnitude of the upper half of the spectrum
-$$
-\max _{k \in[n / 2, n]}\left|\lambda_k\right|
-$$
-
-Can we recursively utilize this $1/3$ effectiveness on half the error？
-
----
-
-TODO:
-- Show that error damped rapidly on some direction (Fourier)
-- Why using 2/3 for weighted Jacobi
-- Lead to MG Step #1: smoother
-- Show the relation between Coarse-Fine and Smooth-Oscillatory
-- Lead to transfer between fine and coarse
+After this, smooth modes look like oscillatory modes, with little loss of information.
 
 ---
 
-## Questions to resolve...
+## So far we got
+
+Classical iterative methods converge slowly as $n \uparrow$, but have the smoothing property.
+
+Low-frequency information is well approximated on the coarse grid and becomes high-frequency.
+
+## Next questions
 
 How to transfer between fine and coarse?
 
