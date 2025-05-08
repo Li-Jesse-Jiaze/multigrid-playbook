@@ -88,7 +88,7 @@ $$
 
 ---
 
-## Use the Jacobi Method
+### Use the Jacobi Method
 <br>
 
 Solve the problem
@@ -114,9 +114,9 @@ $$
 x^*
 $$
 Error
-$$e_0 = x^*-x_0$$
+$$e^{(0)} = x^*-x^{(0)}$$
 Residual
-$$r_0 = b-Ax_0 = A e_0$$
+$$r^{(0)} = b-Ax^{(0)} = A e^{(0)}$$
 
 </div>
 
@@ -188,7 +188,7 @@ Performs like $\textcolor{#2ba02b}{\text{low}}$ and $\textcolor{#ff7f0f}{\text{h
 
 ---
 
-## What does Jacobi do to error?
+### What does Jacobi do to error?
 
 <div class="container">
 
@@ -209,7 +209,7 @@ T=\left[\begin{array}{ccccc}
 \end{array}\right]
 $$
 
-It is averaging
+It is averaging (mean filter)
 
 $$
 \textcolor{#2ba02b}{e_i^{\text {new }}} \leftarrow \frac{1}{2}\left(\textcolor{#ff7f0f}{e_{i-1}^{\text {old }}}+\textcolor{#ff7f0f}{e_{i+1}^{\text {old }}}\right)
@@ -239,7 +239,7 @@ It *averages out* certain frequency quickly
 
 ---
 
-## From Jacobi to weighted-Jacobi
+### From Jacobi to weighted-Jacobi
 
 <div class="container">
 
@@ -277,7 +277,7 @@ Like a low-pass filter. Why?
 
 ---
 
-## Fourier Analysis
+### Fourier Analysis
 
 Using the eigenvectors of the error propagation $T$ as a basis for the error space
 $$
@@ -339,7 +339,7 @@ Maybe it's possible to apply this 1/3 reduction on half the error, on and on?
 
 ---
 
-## How can we turn low frequency errors to high frequency?
+### How can we turn low frequency errors to high frequency?
 
 Sampling on a coarse grid
 
@@ -356,13 +356,13 @@ After this, smooth modes look like oscillatory modes, with little loss of inform
 
 ---
 
-## So far we got
+### So far we got
 
 Classical iterative methods converge slowly as $n \uparrow$, but have the smoothing property.
 
 Low-frequency information is well approximated on the coarse grid and becomes high-frequency.
 
-## Next questions
+### Next questions
 
 How to transfer between fine and coarse?
 
@@ -371,57 +371,298 @@ What do we do “solve” on a coarse grid?
 ---
 
 
-## Remind the Projection Methods
+### Remind the Projection Methods
 
 Look for the "best" update:
 $$
-x_1 \leftarrow x_0+u
+x^{(1)} \leftarrow x^{(0)}+u
 $$
 
-Over a smaller space
+Over a smaller space (with $A$-norm)
 $$
-\min _{u \in \operatorname{span}\{V\}}\left\|x^*-x_1\right\|
-$$
-
-Then $u=V y$
-$$
-V^T V y=V^T e_0
+\min _{u \in \text { span }\{V\}}\left\|x^*-x^{(1)}\right\|_A
 $$
 
 So the update looks like
 $$
-x_1=x_0+V\left(V^T V\right)^{-1} V^T e_0
-$$
-
----
-
-<!-- _header: Remind the Projection Methods -->
-
-Look at the $A$-norm
-$$
-\min _{u \in \text { span }\{V\}}\left\|x^*-x_1\right\|_A
-$$
-
-Then
-$$
-V^T A V y=V^T A e_0 =V^T r_0
-$$
-
-So that
-$$
-x_1=x_0+V\left(V^T A V\right)^{-1} V^T r_0
+x^{(1)}=x^{(0)}+V\left(V^\top A V\right)^{-1} V^\top r^{(0)}
 $$
 
 The error
 $$
-e_1 = (I-\underbrace{\textcolor{green}{V\left(V^T A V\right)^{-1} V^T A}}_\text{A-orthogonal projection}) e_0
+e^{(1)} = (I-\underbrace{\textcolor{green}{V\left(V^\top A V\right)^{-1} V^\top A}}_\text{A-orthogonal projection}) e^{(0)}
 $$
 
 ---
 
-TODO:
-- Restriction and Prolongation
-- Two-grid
-- How Accurate is it?
-- Convergence
-- Multigrid W/V cycle
+### Prolongation: From Coarse to Fine
+
+<style scoped>
+img[alt~="c2f"]{
+  display: block;
+  margin: 0 auto;
+  width: 60%;
+}
+</style>
+![c2f](./fig/c2f.SVG)
+
+Construct an operator
+$$
+P: \Omega^{2 h} \rightarrow \Omega^h
+$$
+where $\Omega^{2 h}$ is the coarse grid and $\Omega^{h}$ is the fine grid
+
+---
+
+### Interpolation
+
+<div class="container">
+
+<div class="col">
+
+$$
+\begin{aligned}
+v_{2 i}^h & =v_i^{2 h}\\
+v_{2 i+1}^h & =\frac{1}{2}\left(v_i^{2 h}+v_{i+1}^{2 h}\right)
+\end{aligned}
+$$
+
+Or in matrix form
+$$
+P = \frac{1}{2}\left[\begin{array}{cccc}
+1 & & & \\
+2 & & & \\
+1 & 1 & & \\
+& 2 & & \\
+& & \vdots & \\
+& & 1 & 1 \\
+& & & 2 \\
+& & & 1
+\end{array}\right]
+$$
+
+</div>
+
+<div class="col">
+
+Looks like
+<style scoped>
+img[alt~="interp"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![interp](./fig/interp.svg)
+
+Notice: $P$ is full rank
+
+</div>
+
+</div>
+
+---
+
+In projection method
+$$
+x^{(1)}=x^{(0)}+V\left(V^\top A V\right)^{-1} V^\top r^{(0)}
+$$
+
+If $V$ is $\text { span }\{p\}$, or just $P$
+
+$$
+x^{(1)}=x^{(0)}+P\left(P^\top A P\right)^{-1} P^\top r^{(0)}
+$$
+
+We get the **two-grid method**
+
+---
+
+### Two-grid Method
+
+$$
+x^{(1)}=x^{(0)}+P\left(P^\top A P\right)^{-1} P^\top r^{(0)}
+$$
+
+$$
+\begin{array}{lc}
+\text {1. Given } & x^{(0)} \\
+\text {2. Smooth a few times } & x^{(0)} \leftarrow x^{(0)}+\omega D^{-1} A r^{(0)} \\
+\text {3. Form residual } & r^{(0)}=b-A x^{(0)} \\
+\text {4. Restrict the residual } & P^\top r^{(0)} \\
+\text {5. Solve the coarse problem } & P^\top A P \delta=P^\top r^{(0)} \quad \\
+\text {6. Interpolate the approx error } & P \delta \\
+\text {7. Correct} & x^{(1)}= x^{(0)}+P \delta
+\end{array}
+$$
+
+$R = P^\top$ is the **restriction** here
+$A_c = P^\top A P$ is the **coarse level operator** here
+
+---
+
+Let's look at the coarse level operator $A_c$
+
+<style scoped>
+img[alt~="glk"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![glk](./fig/galerkin.svg)
+
+<div class="container">
+
+<div class="col">
+
+
+The restriction $R$ don't have to be $P^\top$
+
+See if
+
+$$
+R = P^\top = \frac{1}{2}\left[\begin{array}{cccccccccc}
+1 & 2 & 1 & & & & & & & \\
+& & 1 & 2 & 1 & & & & & \\
+& & & & \cdots & \cdots & \cdots & & & \\
+& & & & & & & 1 & 2 & 1
+\end{array}\right]
+$$
+
+</div>
+
+<div class="col">
+
+<style scoped>
+img[alt~="restrict"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![restrict](./fig/restrict.svg)
+
+</div>
+
+</div>
+
+---
+
+### Other options for restriction
+
+Make sure that each row of $R$ sums to 1
+
+<div class="container">
+
+<style scoped>
+img[alt~="restrict"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+
+<div class="col">
+
+
+Weighted $P^\top$
+
+$$
+\frac{1}{4}\left[\begin{array}{cccccccccc}
+1 & 2 & 1 & & & & & & & \\
+& & 1 & 2 & 1 & & & & & \\
+& & & & \cdots & \cdots & \cdots & & & \\
+& & & & & & & 1 & 2 & 1
+\end{array}\right]
+$$
+
+![restrict](./fig/restrict_weighted.svg)
+
+</div>
+
+$\quad$
+
+<div class="col">
+
+Injection
+
+$$
+\left[\begin{array}{cccccccccc}
+0 & 1 & 0 & & & & & & & \\
+& & 0 & 1 & 0 & & & & & \\
+& & & & \cdots & \cdots & \cdots & & & \\
+& & & & & & & 0 & 1 & 0
+\end{array}\right]
+$$
+
+<style scoped>
+img[alt~="restrict"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![restrict](./fig/restrict_injection.svg)
+
+</div>
+
+</div>
+
+---
+
+### Algorithm: Two-grid Method
+
+<div class="container">
+
+<div class="col">
+
+1. Smooth $\nu_{p r e}$ times on $A u=f$
+2. Compute $r=f-A u$
+3. Compute $r_c=R r$
+4. Solve $A_c \delta_c=r_c$
+5. Interpolate $\hat{\delta}=P \delta_c$
+6. Correct $u \leftarrow u+\hat{\delta}$
+7. Smooth $\nu_{p o s t}$ times on $A u=f$
+
+</div>
+
+<div class="col">
+
+<style scoped>
+img[alt~="vcycle"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![vcycle](./fig/vcycle.svg)
+
+<center>A two-level V cycle</center>
+
+</div>
+
+</div>
+
+---
+
+### How Accurate is Multigrid?
+
+$u^*-u_h^* \quad$ Discretization error
+$u_h^*-u_h \quad$ Algebraic error
+
+TODO: Show that the total error is limited by the discretization error
+
+---
+
+### Convergence of Two-grid Method
+
+TODO: Analyze the convergence via Fourier and energy norm (by writing) ⭐
+
+---
+
+### Multigrid
+
+Do two-grid recursively
+
+TODO: W/V cycle
