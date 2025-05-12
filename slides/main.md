@@ -48,6 +48,16 @@ Y. Saad, *Iterative Methods for Sparse Linear Systems*, §§13.3–13.5
 
 ---
 
+<center>
+
+"**Talk is cheap. Show me the code.**" – Linus Torvalds
+
+Code is available on [Li-Jesse-Jiaze/multigrid-playbook](https://github.com/Li-Jesse-Jiaze/multigrid-playbook).
+
+</center>
+
+---
+
 ### Model Problem
 
 1D model problem
@@ -104,7 +114,7 @@ $$
 <br>
 
 
-> Or think of it as a gradient descent with
+> Or consider it as a gradient descent with
 > fixed step size $1$ and preconditioner $D^{-1}$
 
 <div class="sidebox">
@@ -279,16 +289,17 @@ Like a low-pass filter. Why?
 
 ### Fourier Analysis
 
-Using the eigenvectors of the error propagation $T$ as a basis for the error space
+Error propagation $T$
+$$
+e \leftarrow\left(I-\omega D^{-1} A\right) e=T e
+$$
+
+Using the eigenvectors of $T$ as a basis for the error space
 $$
 e^{(0)}=\sum_{k=1}^n c_k v_k
 $$
 
 Then the error transforms like
-$$
-e \leftarrow\left(I-\omega D^{-1} A\right) e=T e
-$$
-
 $$
 e^{(\sigma)} = T e^{(0)} =\sum_{k=1}^n c_k T^\sigma v_k =\sum_{k=1}^n c_k \lambda_k^\sigma v_k
 $$
@@ -307,13 +318,13 @@ T=I-(2 / 3) D^{-1} A & \longrightarrow \lambda_k=1-\frac{2}{3} \cdot \frac{1}{2}
 \end{aligned}
 $$
 
-The spectral radius $\rho_n \approx 1-{C}/{n^2}$ (confirms the quadratic **#iteration**)
+The spectral radius $\rho_n \approx 1-{C}/{n^2}$
 
 But
 $$
 e^{(\sigma)} =\sum_{k=1}^n c_k \lambda_k^\sigma v_k
 $$
-error on different direction $v_k$, or frequency $k$, is reduced by different magnitude of $\lambda_k$
+error on different direction $v_k$ (or frequency $k$) is reduced by different magnitude of $\lambda_k$
 
 
 ---
@@ -334,8 +345,6 @@ img[alt~="eigen"]{
 For $\omega = 2/3$, the high frequency part of the error is reduced by (at least) $1/3$ 
 
 > **Smoothing factor** of $T$: the maximum magnitude of the upper half spectrum
-
-Maybe it's possible to apply this 1/3 reduction on half the error, on and on?
 
 ---
 
@@ -646,7 +655,7 @@ img[alt~="vcycle"]{
 
 ---
 
-### Convergence (handwritten)
+### Convergence (written)
 
 ---
 
