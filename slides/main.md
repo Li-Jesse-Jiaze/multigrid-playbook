@@ -48,7 +48,7 @@ Y. Saad, *Iterative Methods for Sparse Linear Systems*, §§13.3–13.5
 
 ---
 
-## Model Problem
+### Model Problem
 
 1D model problem
 
@@ -122,7 +122,7 @@ $$r^{(0)} = b-Ax^{(0)} = A e^{(0)}$$
 
 ---
 
-## Some Convergence Test
+### Some Convergence Test
 
 The number of iterations required to get the tolerance of 1.0E-10 (RMS residual norm)
 
@@ -209,7 +209,7 @@ T=\left[\begin{array}{ccccc}
 \end{array}\right]
 $$
 
-It is averaging (mean filter)
+It is averaging (like a mean filter)
 
 $$
 \textcolor{#2ba02b}{e_i^{\text {new }}} \leftarrow \frac{1}{2}\left(\textcolor{#ff7f0f}{e_{i-1}^{\text {old }}}+\textcolor{#ff7f0f}{e_{i+1}^{\text {old }}}\right)
@@ -519,7 +519,7 @@ img[alt~="glk"]{
 
 The restriction $R$ don't have to be $P^\top$
 
-See if
+It's called a balance pair if
 
 $$
 R = P^\top = \frac{1}{2}\left[\begin{array}{cccccccccc}
@@ -551,8 +551,6 @@ img[alt~="restrict"]{
 
 ### Other options for restriction
 
-Make sure that each row of $R$ sums to 1
-
 <div class="container">
 
 <style scoped>
@@ -566,7 +564,7 @@ img[alt~="restrict"]{
 <div class="col">
 
 
-Weighted $P^\top$
+$\frac{1}{2}P^\top$:
 
 $$
 \frac{1}{4}\left[\begin{array}{cccccccccc}
@@ -585,7 +583,7 @@ $\quad$
 
 <div class="col">
 
-Injection
+Injection:
 
 $$
 \left[\begin{array}{cccccccccc}
@@ -608,6 +606,8 @@ img[alt~="restrict"]{
 </div>
 
 </div>
+
+each row of $R$ sums to 1
 
 ---
 
@@ -646,23 +646,65 @@ img[alt~="vcycle"]{
 
 ---
 
+### Convergence (handwritten)
+
+---
+
 ### How Accurate is Multigrid?
 
-$u^*-u_h^* \quad$ Discretization error
-$u_h^*-u_h \quad$ Algebraic error
+<div class="container">
 
-TODO: Show that the total error is limited by the discretization error
+<div class="col">
+
+Consider the exact solution to the PDE $u^*$
+
+$$
+-u^{\prime \prime}=f
+$$
+
+
+The exact solution to the linear system $u_h^*$
+
+$$
+A u=b
+$$
+
+
+The numerical solution $u_h \approx u_h^*$
+
+
+</div>
+
+<div class="col">
+
+<style scoped>
+img[alt~="vcycle"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![vcycle](./fig/de.svg)
+
+</div>
+
+</div>
+
+<br>
+
+<center>The total error is limited by the discretization error</center>
 
 ---
 
-### Convergence of Two-grid Method
-
-TODO: Analyze the convergence via Fourier and energy norm (by writing) ⭐
-
----
-
-### Multigrid
+### W/V cycle
 
 Do two-grid recursively
 
-TODO: W/V cycle
+<style scoped>
+img[alt~="wvcycle"]{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
+![wvcycle](./fig/wv_cycle.svg)
