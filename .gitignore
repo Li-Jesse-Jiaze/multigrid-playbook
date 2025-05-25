@@ -173,7 +173,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-slides/*.pdf
-slides/*.html
-slides/*.pptx
+slides-marp/
 node_modules/
+convergence.md
+package*.json
+script/
